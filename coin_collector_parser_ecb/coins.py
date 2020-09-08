@@ -11,9 +11,20 @@ from enum import IntEnum
 from dataclasses import dataclass
 from dataclasses import field
 
+from pathlib import Path
+import json
+
+import logging
+
 ECB_TWO_EURO_URL = "https://www.ecb.europa.eu/euro/coins/comm/html/comm_{year}.{lang}.html"
 START_YEAR = 2004
 CURRENT_YEAR = datetime.datetime.now().year
+
+path = Path(__file__).parent / Path("./countries_de_en.json")
+with path.open() as f:
+    country_translations = json.load(f)
+
+fuzzy_search_cache = {}
 
 @dataclass
 class TwoEuro:
@@ -40,11 +51,26 @@ def get_commemorative_coins(lang=""):
 
         if element.name == "h2":
             country_name = element.text.strip().capitalize()
-            print(country_name)
-            country = pycountry.countries.get(
-                name=element.text.strip()
-            ).alpha_2
-            coin.countries = [country]
+            translated_country = country_translations[country_name.lower()]
+            capitalized_translated_country = translated_country.capitalize()
+
+            found_country = pycountry.countries.get(
+                name=capitalized_translated_country
+            )
+
+            if found_country is None:
+                try:
+                    found_country = fuzzy_search_cache[capitalized_translated_country]
+                except KeyError:
+                    found_countries = pycountry.countries.search_fuzzy(capitalized_translated_country)
+                    if not found_countries:
+                        logging.warning("no country object matched country named: <%s>", translated_country)
+                    found_country = found_countries[0]
+                    logging.warning("found country <%s> with fuzzy search from <%s>", found_country.name, translated_country)
+                    fuzzy_search_cache[capitalized_translated_country] = found_country
+
+            coin.countries = [found_country.alpha_2]
+
         elif element.name == "div":
             pass
         elif element.name == "hr":
