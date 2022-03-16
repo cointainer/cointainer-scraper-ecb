@@ -58,13 +58,6 @@ class TwoEuro:
             f"description='{self.description[:25]}...')"
         )
 
-
-class State(IntEnum):
-    TITLE = 0
-    CONTENT = 1
-    SEPERATOR = 2
-
-
 def _get_alpha2_country_from_string(text: str, translate: bool = True) -> str:
     country_name = text.strip().capitalize()
     if translate:
