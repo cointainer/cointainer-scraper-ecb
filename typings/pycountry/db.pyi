@@ -48,7 +48,7 @@ class Database:
         ...
     
     @lazy_load
-    def get(self, name: str, **kw: Dict[Any, Any]) -> Data:
+    def get(self, name: str = ..., alpha_2: str = ..., **kw: Dict[Any, Any]) -> Data:
         ...
     
     @lazy_load
