@@ -4,7 +4,7 @@ import logging
 from dataclasses import dataclass, field
 from pathlib import Path
 import sys
-from typing import Any, Dict, List, Optional, Tuple, cast, Union
+from typing import Any, Dict, List, Literal, Optional, Tuple, cast, Union
 from bs4.element import NavigableString, Tag
 
 import pycountry
@@ -43,7 +43,11 @@ path = Path(__file__).parent / Path("./countries.json")
 with path.open() as f:
     country_translations = json.load(f)
 
-fuzzy_search_cache: Dict[str, Data] = {}
+fuzzy_search_cache: Dict[str, Data] = {
+    "Vatican City".capitalize(): pycountry.countries.get(alpha_2="VA"),
+    "Vatican".capitalize(): pycountry.countries.get(alpha_2="VA"),
+    "Italia".capitalize(): pycountry.countries.get(alpha_2="IT"),
+}
 
 info_description_mapping = {
     0: "feature",
@@ -84,6 +88,8 @@ class Coinage:
     country: Optional[str]
     image_default_url: Optional[str]
     volume: Optional[int]
+    image_default_url_info: Optional[str] = None
+    country_info: Optional[str] = None
     circulation_date: Optional[datetime.date] = None
     image_attribution: Optional[str] = None
     circulation_date_info: Optional[str] = None
@@ -112,8 +118,12 @@ class TwoEuro:
 
 
 def _get_alpha2_country_from_string(
-    text: str, year: int, paragraph_index: int, translate: bool = True
+    text: str, year: int, paragraph_index: int, language: str = "en"
 ) -> Union[str, None]:
+    if text.strip().lower() == "euro area countries":
+        return None
+
+    translate = language != "en"
     country_name = text.strip().capitalize()
     if translate:
         country_name = country_translations[country_name.lower()]
@@ -126,16 +136,11 @@ def _get_alpha2_country_from_string(
             found_country = fuzzy_search_cache[capitalized_translated_country]
         except KeyError:
             try:
-                found_countries = pycountry.countries.search_fuzzy(
+                found_country = pycountry.countries.lookup(
                     capitalized_translated_country
                 )
             except LookupError:
-                LOG.warning(
-                    f"({year}, {paragraph_index}) no country object matched country "
-                    f"named: '{country_name}'"
-                )
                 return None
-            found_country = found_countries[0]
             LOG.info(
                 f"({year}, {paragraph_index}) found country '{found_country.name}' "
                 f"with fuzzy search from '{capitalized_translated_country}'"
@@ -148,34 +153,6 @@ def _get_alpha2_country_from_string(
 def get_commemorative_coins(lang: str = "en", year: int = START_YEAR) -> List[TwoEuro]:
     response = requests.get(ECB_TWO_EURO_URL.format(year=year, lang=lang))
     return _get_commemorative_coins(response.content, lang, year)
-
-
-def _create_unknown_fall_back_country(
-    year: int,
-    paragraph_index: int,
-    title_header: str,
-    image_url: str,
-    circulation_date: Optional[datetime.date],
-    circulation_date_info: Optional[str],
-    volume: Optional[int],
-    volume_info: Optional[str],
-) -> Coinage:
-    LOG.warning(
-        f"({year}, {paragraph_index}) failed to parse "
-        f"fall back country name from h3 tag "
-        f"with content: '{title_header}'. Country "
-        "will be 'UNKNOWN_COUNTRY'"
-    )
-    # add coinage with unknown country
-    return Coinage(
-        country="COUNTRY_UNKNOWN",
-        image_default_url=image_url,
-        image_attribution="",
-        circulation_date_info=circulation_date_info,
-        circulation_date=circulation_date,
-        volume=volume,
-        volume_info=volume_info,
-    )
 
 
 @dataclass
@@ -247,6 +224,17 @@ def _parse_volume(box_content: Content) -> Tuple[Optional[int], Optional[str]]:
         return (None, box_content.raw_issuing_volume)
 
 
+def _parse_image_urls(coin_box: Any) -> List[str]:
+    image_container = coin_box.find("div", {"class": "coins"})
+    images = image_container.find_all("img")
+
+    return [
+        ECB_BASE_URL + image["src"].removeprefix(".")
+        for image in images
+        if not image["src"].endswith(".html")
+    ]
+
+
 def _parse_circulation_date(
     box_content: Content, language: str, year: int, paragraph_index: int
 ) -> Tuple[Optional[datetime.date], Optional[str]]:
@@ -283,6 +271,7 @@ def _get_commemorative_coins(
         return []
 
     coin_boxes = cast(Tag, coin_boxes_div).find_all("div", {"class": "box"})
+    assert len(coin_boxes)  == 30, len(coin_boxes)
 
     coins: List[TwoEuro] = []
     for paragraph_index, coin_box in enumerate(coin_boxes):
@@ -294,106 +283,109 @@ def _get_commemorative_coins(
             box_content, lang, year, paragraph_index
         )
 
-        # coin image(s)
-        image_container = coin_box.find("div", {"class": "coins"})
-        images = image_container.find_all("img")
-
-        # coin country
+        # coin fall back country
         title_header = coin_box.find("h3")
         fall_back_country = _get_alpha2_country_from_string(
-            title_header.text, year, paragraph_index, lang != "en"
+            title_header.text, year, paragraph_index, lang
         )
+        if (
+            fall_back_country is None
+            and title_header.text.lower() != "euro area countries"
+        ):
+            LOG.warning(
+                f"({year}, {paragraph_index}) no country object matched country "
+                f"named: '{title_header.text}'"
+            )
 
-        image_urls = [
-            ECB_BASE_URL + image["src"].removeprefix(".")
-            for image in images
-            if not image["src"].endswith(".html")
-        ]
+        image_urls = _parse_image_urls(coin_box)
+
+        if len(image_urls) == 0:
+            if fall_back_country is None:
+                warning = (
+                    f"({year}, {paragraph_index}) no image urls found and failed to "
+                    f"parse fall back country name from h3 tag "
+                    f"with content: '{title_header}'. Country and image default url"
+                    "will be 'None'"
+                )
+                LOG.warning(warning)
+                coinages = [
+                    Coinage(
+                        country=None,
+                        country_info=warning,
+                        image_default_url=None,
+                        image_attribution="",
+                        circulation_date=circulation_date,
+                        circulation_date_info=circulation_date_info,
+                        volume=volume,
+                        volume_info=volume_info,
+                    )
+                ]
+            else:
+                warning = (
+                    f"({year}, {paragraph_index}) Could not find any images for "
+                    f"the coin feature: '{box_content.feature}'. Using fall back "
+                    f"country from h3 tag: '{fall_back_country}'"
+                )
+                LOG.warning(warning)
+                coinages = [
+                    Coinage(
+                        country=fall_back_country,
+                        image_default_url=None,
+                        image_default_url_info=warning,
+                        image_attribution="",
+                        circulation_date=circulation_date,
+                        circulation_date_info=circulation_date_info,
+                        volume=volume,
+                        volume_info=volume_info,
+                    )
+                ]
 
         coinages: List[Coinage] = []
         for image_url in image_urls:
             country_alpha2 = None
             # /euro/coins/comm/shared/img/joint_comm_2009_Luxembourg_Face.jpg
+            # try to extract the country out of the image file name
+            searched_words: List[str] = []
             for word in reversed(
                 image_url.rsplit(".", maxsplit=1)[0]
                 .rsplit("/", maxsplit=1)[1]
                 .split("_")
             ):
+                searched_words.append(word)
+                if word.isnumeric():
+                    continue
+
                 country_alpha2 = _get_alpha2_country_from_string(
-                    word, year, paragraph_index, lang != "en"
+                    word, year, paragraph_index, lang
                 )
                 if country_alpha2 is not None:
                     break
-
-            if country_alpha2 is None:
-                if not fall_back_country:
-                    coinages.append(
-                        _create_unknown_fall_back_country(
-                            year,
-                            paragraph_index,
-                            title_header,
-                            image_url,
-                            circulation_date,
-                            circulation_date_info,
-                            volume,
-                            volume_info,
-                        )
-                    )
+            else:
+                # if no country_alpha2 could be extracted. Try to use the
+                # fall back country
+                if fall_back_country is not None:
+                    country_alpha2 = fall_back_country
                 else:
-                    # add coinage with fall back country
-                    coinages.append(
-                        Coinage(
-                            country=fall_back_country,
-                            image_default_url=image_url,
-                            image_attribution="",
-                            circulation_date=circulation_date,
-                            circulation_date_info=circulation_date_info,
-                            volume=volume,
-                            volume_info=volume_info,
-                        )
+                    LOG.warning(
+                        f"({year}, {paragraph_index}) no country object could be extracted "
+                        f"from the given image file name tokens: '{searched_words}' and "
+                        f"it also failed to parse "
+                        f"fall back country name from h3 tag "
+                        f"with content: '{title_header}'. Country "
+                        "will be 'None'"
                     )
-            else:
-                coinages.append(
-                    Coinage(
-                        country=country_alpha2,
-                        image_default_url=image_url,
-                        image_attribution="",
-                        circulation_date=circulation_date,
-                        circulation_date_info=circulation_dates_info,
-                        volume=volume,
-                        volume_info=volume_info,
-                    )
-                )
 
-        if len(image_urls) == 0:
-            if fall_back_country is None:
-                coinages = [
-                    _create_unknown_fall_back_country(
-                        year,
-                        paragraph_index,
-                        title_header,
-                        "",
-                        None,
-                        circulation_dates_info,
-                        volume,
-                        volume_info,
-                    )
-                ]
-            else:
-                LOG.warning(
-                    f"({year}, {paragraph_index}) Could not find any images for "
-                    f"the coin feature: '{box_content.feature}'. Using fall back "
-                    f"country name from h3 tag with text: '{fall_back_country}'"
+            coinages.append(
+                Coinage(
+                    country=country_alpha2,
+                    image_default_url=image_url,
+                    image_attribution="",
+                    circulation_date=circulation_date,
+                    circulation_date_info=circulation_date_info,
+                    volume=volume,
+                    volume_info=volume_info,
                 )
-                coinages = [
-                    Coinage(
-                        country=fall_back_country,
-                        image_default_url="",
-                        volume=volume,
-                        volume_info=volume_info,
-                        circulation_date=None,
-                    )
-                ]
+            )
 
         coins.append(
             TwoEuro(
