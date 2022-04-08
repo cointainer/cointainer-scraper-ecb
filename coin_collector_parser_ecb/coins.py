@@ -271,7 +271,6 @@ def _get_commemorative_coins(
         return []
 
     coin_boxes = cast(Tag, coin_boxes_div).find_all("div", {"class": "box"})
-    assert len(coin_boxes)  == 30, len(coin_boxes)
 
     coins: List[TwoEuro] = []
     for paragraph_index, coin_box in enumerate(coin_boxes):
