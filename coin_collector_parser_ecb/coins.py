@@ -47,6 +47,8 @@ fuzzy_search_cache: Dict[str, Data] = {
     "Vatican City".capitalize(): pycountry.countries.get(alpha_2="VA"),
     "Vatican".capitalize(): pycountry.countries.get(alpha_2="VA"),
     "Italia".capitalize(): pycountry.countries.get(alpha_2="IT"),
+    "Nederland".capitalize(): pycountry.countries.get(alpha_2="NL"),
+    "The Netherlands".capitalize(): pycountry.countries.get(alpha_2="NL"),
 }
 
 info_description_mapping = {
@@ -151,7 +153,14 @@ def _get_alpha2_country_from_string(
 
 
 def get_commemorative_coins(lang: str = "en", year: int = START_YEAR) -> List[TwoEuro]:
-    response = requests.get(ECB_TWO_EURO_URL.format(year=year, lang=lang))
+    url = ECB_TWO_EURO_URL.format(year=year, lang=lang)
+    response = requests.get(url)
+    if not response.status_code == 200:
+        LOG.warning(
+            f"The request to: '{url}' returned with an incorrect status code "
+            f"'{response.status_code}'. Expected status code '200'."
+        )
+        return []
     return _get_commemorative_coins(response.content, lang, year)
 
 
@@ -231,7 +240,7 @@ def _parse_image_urls(coin_box: Any) -> List[str]:
     return [
         ECB_BASE_URL + image["src"].removeprefix(".")
         for image in images
-        if not image["src"].endswith(".html")
+        if not image["src"].endswith(".html") and image["src"]
     ]
 
 
