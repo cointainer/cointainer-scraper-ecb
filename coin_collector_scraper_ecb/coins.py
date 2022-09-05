@@ -182,24 +182,32 @@ def _parse_content_fields(coin_box: Any, year: int, paragraph_index: int):
     current_paragraph_content = ""
     while len(paragraphs) > 0:
         paragraph = paragraphs.pop(0)
-        paragraph_type = paragraph.find("strong")
 
-        if paragraph_type is None:
-            current_paragraph_content += f" {paragraph.text}"
-            continue
+        # Since 2022 inside the description block, there is one empty strong tag.
+        # So as a workaround we will iterate over all found strong tags and search
+        # for a tag with text which contains : to identify it as an paragraph_type.
+        for paragraph_type in paragraph.find_all("strong"):
+            if paragraph_type is None:
+                current_paragraph_content += f" {paragraph.text}"
+                continue
 
-        if not paragraph_type.text.strip().endswith(":"):
-            LOG.warning(
-                f"({year}, {paragraph_index}) could not found ':' on strong tag. Possible missing info "
-                f"description: '{info_description_mapping[len(infos)]}' with "
-                f"paragraph tag: {paragraph.text.encode('string_escape')}"
-            )
-            infos.append("")
-            continue
+            if not paragraph_type.text.strip().endswith(":"):
+                if paragraph_type.text.strip() == "":
+                    LOG.warning(f"({year}, {paragraph_index}) found 'strong' tag with no content. Ignoring it.")
+                    continue
 
-        current_paragraph_content = paragraph.text.lstrip(
-            paragraph_type.text.strip()
-        ).strip()
+                LOG.warning(
+                    f"({year}, {paragraph_index}) could not found ':' on strong tag. Possible missing info "
+                    f"description: '{info_description_mapping[len(infos)]}' with "
+                    f"paragraph tag: {paragraph.text.encode('unicode_escape')}"
+                )
+                infos.append("")
+                continue
+
+            current_paragraph_content = paragraph.text.lstrip(
+                paragraph_type.text.strip()
+            ).strip()
+            break
 
         infos.append(current_paragraph_content)
 
@@ -350,7 +358,24 @@ def _get_commemorative_coins(
 
         coinages: List[Coinage] = []
         for image_url in image_urls:
-            country_alpha2 = None
+            # Since 2022 the ecb don't  provide a name inside the the image link
+            # /euro/coins/comm/shared/img/comm_2022_Joze_Plecnik.jpg
+            # thus always using the fall_back_country first makes sense but
+            # only if one image is only provided
+            country_alpha2 = fall_back_country if len(image_urls) == 1 else None
+            if country_alpha2 is not None:
+                coinages.append(
+                    Coinage(
+                        country=country_alpha2,
+                        image_default_url=image_url,
+                        image_attribution="",
+                        circulation_date=circulation_date,
+                        circulation_date_info=circulation_date_info,
+                        volume=volume,
+                        volume_info=volume_info,
+                    )
+                )
+                continue
             # /euro/coins/comm/shared/img/joint_comm_2009_Luxembourg_Face.jpg
             # try to extract the country out of the image file name
             searched_words: List[str] = []
@@ -406,4 +431,4 @@ def _get_commemorative_coins(
 
 
 if __name__ == "__main__":
-    pprint.pprint(get_commemorative_coins("de", year=2006))
+    pprint.pprint(get_commemorative_coins("de", year=2022))
