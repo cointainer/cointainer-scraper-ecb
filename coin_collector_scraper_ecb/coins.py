@@ -166,12 +166,12 @@ class Content:
 
 
 def _parse_content_fields(coin_box: Any, year: int, paragraph_index: int):
-    # get all descriptions fields assumed to be in order:
+    # Get all descriptions fields assumed to be in order:
     #     'Feature:', 'Description:', 'Issuing volume:', 'Issuing date:'
     infos: List[str] = []
     paragraphs = coin_box.find_all("p")
 
-    # description (can be composed of multiple paragraphs)
+    # Description (can be composed of multiple paragraphs)
     current_paragraph_content = ""
     while len(paragraphs) > 0:
         paragraph = paragraphs.pop(0)
@@ -292,7 +292,7 @@ def _get_commemorative_coins(
             box_content, lang, year, paragraph_index
         )
 
-        # coin fall back country
+        # Coin fall back country
         title_header = coin_box.find("h3")
         fall_back_country = _get_alpha2_country_from_string(
             title_header.text, year, paragraph_index, lang
@@ -387,7 +387,7 @@ def _get_commemorative_coins(
                 if country_alpha2 is not None:
                     break
             else:
-                # if no country_alpha2 could be extracted. Try to use the
+                # When no country_alpha2 could be extracted try to use the
                 # fall back country
                 if fall_back_country is not None:
                     country_alpha2 = fall_back_country
