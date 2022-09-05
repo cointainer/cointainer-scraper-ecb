@@ -101,14 +101,7 @@ class Coinage:
 @dataclass
 class TwoEuro:
     feature: str = ""
-    # volume: int = 0
-    # volume_info: str = ""
     description: str = ""
-    # countries: List[str] = field(default_factory=list)
-    # image_urls: List[str] = field(default_factory=list)
-    # image_attributions: List[str] = field(default_factory=list)
-    # circulation_dates: List[datetime.date] = field(default_factory=list)
-    # circulation_dates_info: str = ""
     coinages: List[Coinage] = field(default_factory=list)
 
     def __str__(self) -> str:
