@@ -145,7 +145,7 @@ def _get_alpha2_country_from_string(
     return found_country.alpha_2
 
 
-def get_commemorative_coins(lang: str = "en", year: int = START_YEAR) -> List[TwoEuro]:
+def get_two_euro_commemorative_coins(lang: str = "en", year: int = START_YEAR) -> List[TwoEuro]:
     url = ECB_TWO_EURO_URL.format(year=year, lang=lang)
     response = requests.get(url)
     if not response.status_code == 200:
@@ -154,7 +154,7 @@ def get_commemorative_coins(lang: str = "en", year: int = START_YEAR) -> List[Tw
             f"'{response.status_code}'. Expected status code '200'."
         )
         return []
-    return _get_commemorative_coins(response.content, lang, year)
+    return _get_two_euro_commemorative_coins(response.content, lang, year)
 
 
 @dataclass
@@ -262,7 +262,7 @@ def _parse_circulation_date(
         return (None, box_content.raw_issuing_date)
 
 
-def _get_commemorative_coins(
+def _get_two_euro_commemorative_coins(
     content: bytes, lang: str = "", year: int = START_YEAR
 ) -> List[TwoEuro]:
     soup = BeautifulSoup(content, "html.parser")
@@ -424,4 +424,4 @@ def _get_commemorative_coins(
 
 
 if __name__ == "__main__":
-    pprint.pprint(get_commemorative_coins("de", year=2022))
+    pprint.pprint(get_two_euro_commemorative_coins("de", year=2022))
