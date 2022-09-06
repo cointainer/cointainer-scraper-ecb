@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/B4rtware/coin-collector-scraper/main/docs/images/Cointainer-Scraper.png" width="100%" alt="Cointainer-Scraper Banner">
+<img src="https://github.com/B4rtware/coin-collector-scraper-ecb/raw/main/docs/images/Cointainer-Scraper.png" width="100%" alt="Cointainer-Scraper Banner">
 
 ## Testing
 
