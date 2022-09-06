@@ -15,7 +15,7 @@ coin-collector-scraper-ecb.svg?color=blue">
 </a>
 </div>
 
-## Introduction
+## 👋 Introduction
 
 Cointainer Scraper (ECB) is one of the components of the Cointainer. This component offers the functionality of scraping euro coin data from the ECB website.
 
@@ -91,8 +91,6 @@ get_two_euro_commemorative_coins(
 To run the tests, the `download-test-files.ps1` script must be executed.
 
 This is not the best method because the test data can change. However, I don't know if it is allowed to upload the data to the repository because of the copyright.
-
-
 
 ## 📝 License
 MIT
