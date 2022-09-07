@@ -30,16 +30,9 @@ At the current time, these are the following dates:
 
 ## Installation
 
-`pip install cointainer-scraper-ecb`
-
-### via git
-
-1. make sure to use at least **python 3.8**
-2. clone the repo `git clone https://github.com/B4rtware/coin-collector-scraper-ecb.git`
-3. `cd coin-collector-scraper-ecb` and install dependencies via
-    - `poetry install` ([Poetry](https://github.com/python-poetry/poetry))
-    or
-    - use the provided `requirements.txt`
+```bash
+pip install cointainer-scraper-ecb
+```
 
 ## Example
 ```python
