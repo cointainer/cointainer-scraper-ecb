@@ -15,7 +15,7 @@ coin-collector-scraper-ecb.svg?color=blue">
 </a>
 </div>
 
-## 👋 Introduction
+## Introduction
 
 Cointainer Scraper (ECB) is one of the components of the Cointainer. This component offers the functionality of scraping euro coin data from the ECB website.
 
@@ -28,7 +28,7 @@ At the current time, these are the following dates:
   - Issuing Date
   - Image URLs
 
-## 💡 Installation
+## Installation
 
 `pip install cointainer-scraper-ecb`
 
@@ -41,7 +41,7 @@ At the current time, these are the following dates:
     or
     - use the provided `requirements.txt`
 
-## ⚙️ Example
+## Example
 ```python
 from cointainer_scraper_ecb import get_two_euro_commemorative_coins
 
@@ -53,7 +53,7 @@ get_two_euro_commemorative_coins(
 
 > Tested with Python 3.10.4 and cointainer_scraper_ecb v0.1.0 ✔️
 
-## 👩🏽‍💻 Development
+## Development
 
 ### Creating a new release
 
@@ -92,5 +92,5 @@ To run the tests, the `download-test-files.ps1` script must be executed.
 
 This is not the best method because the test data can change. However, I don't know if it is allowed to upload the data to the repository because of the copyright.
 
-## 📝 License
-MIT
+## License
+Apache-2.0
