@@ -4,7 +4,7 @@ import logging
 from dataclasses import dataclass, field
 from pathlib import Path
 import sys
-from typing import Any, Dict, List, Literal, Optional, Tuple, cast, Union
+from typing import Any, Dict, List, Optional, Tuple, cast, Union
 from bs4.element import NavigableString, Tag
 
 import pycountry
@@ -14,8 +14,6 @@ import requests
 # TODO: try to remove this dependeny by just declaring a long list with the mappings?
 import dateparser
 from bs4 import BeautifulSoup
-
-COIN_IMAGE_URL_REGEX = ""
 
 LOG = logging.getLogger("cointainer_scraper_ecb")
 LOG.setLevel(logging.INFO)
@@ -145,7 +143,9 @@ def _get_alpha2_country_from_string(
     return found_country.alpha_2
 
 
-def get_two_euro_commemorative_coins(lang: str = "en", year: int = START_YEAR) -> List[TwoEuro]:
+def get_two_euro_commemorative_coins(
+    lang: str = "en", year: int = START_YEAR
+) -> List[TwoEuro]:
     url = ECB_TWO_EURO_URL.format(year=year, lang=lang)
     response = requests.get(url)
     if not response.status_code == 200:
@@ -186,7 +186,9 @@ def _parse_content_fields(coin_box: Any, year: int, paragraph_index: int):
 
             if not paragraph_type.text.strip().endswith(":"):
                 if paragraph_type.text.strip() == "":
-                    LOG.warning(f"({year}, {paragraph_index}) found 'strong' tag with no content. Ignoring it.")
+                    LOG.warning(
+                        f"({year}, {paragraph_index}) found 'strong' tag with no content. Ignoring it."
+                    )
                     continue
 
                 LOG.warning(
