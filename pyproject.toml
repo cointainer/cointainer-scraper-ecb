@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "cointainer-scraper-ecb"
 version = "0.1.0"
-description = ""
+description = "Cointainer component for scraping coins from the ECB Website."
 authors = ["B4rtware <34386047+B4rtware@users.noreply.github.com>"]
 
 [tool.poetry.dependencies]
