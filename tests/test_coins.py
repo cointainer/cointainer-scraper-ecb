@@ -1,4 +1,4 @@
-from coin_collector_scraper_ecb.coins import _get_two_euro_commemorative_coins
+from cointainer_scraper_ecb.coins import _get_two_euro_commemorative_coins
 
 
 def test_coins_2004():

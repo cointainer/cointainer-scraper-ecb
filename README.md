@@ -1,17 +1,17 @@
-<img src="https://github.com/B4rtware/coin-collector-scraper-ecb/raw/main/docs/images/Cointainer-Scraper.png" width="100%" alt="Cointainer-Scraper Banner">
+<img src="https://github.com/cointainer/scraper-ecb/raw/main/docs/images/Cointainer-Scraper.png" width="100%" alt="Cointainer-Scraper Banner">
 
 > Cointainer component for scraping coins from the ECB Website.
 
 <div align="center">
 <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg">
 </a>
-<a href="https://github.com/B4rtware/coin-collector-scraper-ecb/blob/main/LICENSE">
+<a href="https://github.com/cointainer/scraper-ecb/blob/main/LICENSE">
     <img alt="License" src="https://img.shields.io/github/license/b4rtware/
-coin-collector-scraper-ecb.svg?color=blue">
+cointainer-scraper-ecb.svg?color=blue">
 </a>
-<a href="https://github.com/B4rtware/coin-collector-scraper-ecb"><img src="https://img.shields.io/pypi/pyversions/coin-collector-scraper-ecb.svg"></a><br>
+<a href="https://github.com/B4rtware/cointainer-scraper-ecb"><img src="https://img.shields.io/pypi/pyversions/cointainer-scraper-ecb.svg"></a><br>
 <a href="">
-  <img src="https://img.shields.io/pypi/v/coin-collector-scraper-ecb?color=dar-green" />
+  <img src="https://img.shields.io/pypi/v/cointainer-scraper-ecb?color=dar-green" />
 </a>
 </div>
 

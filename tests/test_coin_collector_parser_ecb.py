@@ -1,4 +1,4 @@
-from coin_collector_scraper_ecb import __version__
+from cointainer_scraper_ecb import __version__
 
 
 def test_version():

@@ -17,5 +17,5 @@ for country in countries:
 
         translations[translated_country] = country["name"]["common"]
 
-with open("coin_collector_scraper_ecb/countries.json", "w", encoding="utf-8") as f:
+with open("cointainer_scraper_ecb/countries.json", "w", encoding="utf-8") as f:
     json.dump(translations, f)

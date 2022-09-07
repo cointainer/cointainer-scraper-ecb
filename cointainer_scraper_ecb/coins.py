@@ -17,7 +17,7 @@ from bs4 import BeautifulSoup
 
 COIN_IMAGE_URL_REGEX = ""
 
-LOG = logging.getLogger("coin_collector")
+LOG = logging.getLogger("cointainer_scraper_ecb")
 LOG.setLevel(logging.INFO)
 
 formatter = logging.Formatter(
