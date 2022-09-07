@@ -52,7 +52,7 @@ class Database:
         ...
     
     @lazy_load
-    def lookup(self, value):
+    def lookup(self, value: str) -> Data:
         ...
     
 

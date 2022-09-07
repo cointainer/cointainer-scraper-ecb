@@ -1,19 +1,18 @@
 import datetime
 import json
 import logging
+import sys
 from dataclasses import dataclass, field
 from pathlib import Path
-import sys
-from typing import Any, Dict, List, Optional, Tuple, cast, Union
-from bs4.element import NavigableString, Tag
-
-import pycountry
-from pycountry.db import Data
-import requests
+from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
 # TODO: try to remove this dependeny by just declaring a long list with the mappings?
 import dateparser
+import pycountry
+import requests
 from bs4 import BeautifulSoup
+from bs4.element import NavigableString, Tag
+from pycountry.db import Data
 
 LOG = logging.getLogger("cointainer_scraper_ecb")
 LOG.setLevel(logging.INFO)
@@ -24,7 +23,6 @@ formatter = logging.Formatter(
     style="{",
 )
 
-import pprint
 
 stream = logging.StreamHandler(sys.stdout)
 stream.setFormatter(formatter)
@@ -136,7 +134,7 @@ def _get_alpha2_country_from_string(
                 return None
             LOG.info(
                 f"({year}, {paragraph_index}) found country '{found_country.name}' "
-                f"with fuzzy search from '{capitalized_translated_country}'"
+                + f"with fuzzy search from '{capitalized_translated_country}'"
             )
             fuzzy_search_cache[capitalized_translated_country] = found_country
 
@@ -151,7 +149,7 @@ def get_two_euro_commemorative_coins(
     if not response.status_code == 200:
         LOG.warning(
             f"The request to: '{url}' returned with an incorrect status code "
-            f"'{response.status_code}'. Expected status code '200'."
+            + f"'{response.status_code}'. Expected status code '200'."
         )
         return []
     return _get_two_euro_commemorative_coins(response.content, lang, year)
@@ -187,14 +185,16 @@ def _parse_content_fields(coin_box: Any, year: int, paragraph_index: int):
             if not paragraph_type.text.strip().endswith(":"):
                 if paragraph_type.text.strip() == "":
                     LOG.warning(
-                        f"({year}, {paragraph_index}) found 'strong' tag with no content. Ignoring it."
+                        f"({year}, {paragraph_index}) found 'strong' tag with no "
+                        + "content. Ignoring it."
                     )
                     continue
 
                 LOG.warning(
-                    f"({year}, {paragraph_index}) could not found ':' on strong tag. Possible missing info "
-                    f"description: '{info_description_mapping[len(infos)]}' with "
-                    f"paragraph tag: {paragraph.text.encode('unicode_escape')}"
+                    f"({year}, {paragraph_index}) could not found ':' on strong tag. "
+                    + "Possible missing info "
+                    + f"description: '{info_description_mapping[len(infos)]}' with "
+                    + f"paragraph tag: {paragraph.text.encode('unicode_escape')}"
                 )
                 infos.append("")
                 continue
@@ -258,8 +258,8 @@ def _parse_circulation_date(
     else:
         LOG.warning(
             f"({year}, {paragraph_index}) could not extract datetime from"
-            f" given circulation date: '{box_content.raw_issuing_date}'. The string will be "
-            f"stored inside the 'circulation_dates_info' attribute."
+            + f" given circulation date: '{box_content.raw_issuing_date}'. "
+            + "The string will be stored inside the 'circulation_dates_info' attribute."
         )
         return (None, box_content.raw_issuing_date)
 
@@ -305,7 +305,7 @@ def _get_two_euro_commemorative_coins(
         ):
             LOG.warning(
                 f"({year}, {paragraph_index}) no country object matched country "
-                f"named: '{title_header.text}'"
+                + f"named: '{title_header.text}'"
             )
 
         image_urls = _parse_image_urls(coin_box)
@@ -395,12 +395,11 @@ def _get_two_euro_commemorative_coins(
                     country_alpha2 = fall_back_country
                 else:
                     LOG.warning(
-                        f"({year}, {paragraph_index}) no country object could be extracted "
-                        f"from the given image file name tokens: '{searched_words}' and "
-                        f"it also failed to parse "
-                        f"fall back country name from h3 tag "
-                        f"with content: '{title_header}'. Country "
-                        "will be 'None'"
+                        f"({year}, {paragraph_index}) no country object could be "
+                        + "extracted from the given image file name tokens: "
+                        + f"'{searched_words}' and it also failed to parse fall back "
+                        + f"country name from h3 tag with content: '{title_header}'. "
+                        + "Country will be 'None'."
                     )
 
             coinages.append(
@@ -423,7 +422,3 @@ def _get_two_euro_commemorative_coins(
             )
         )
     return coins
-
-
-if __name__ == "__main__":
-    pprint.pprint(get_two_euro_commemorative_coins("de", year=2022))
