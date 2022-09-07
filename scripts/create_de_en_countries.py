@@ -9,8 +9,13 @@ countries = json.loads(response.text)
 
 translations = {}
 for country in countries:
-    deu = country["translations"]["deu"]["common"]
-    translations[deu.lower()] = country["name"]["common"]
+    for translation in country["translations"].values():
+        translated_country = translation["common"].lower()
 
-with open("coin_collector_parser_ecb/countries_de_en.json", "w", encoding='utf8') as f:
+        if translated_country in translations:
+            continue
+
+        translations[translated_country] = country["name"]["common"]
+
+with open("coin_collector_scraper_ecb/countries.json", "w", encoding="utf-8") as f:
     json.dump(translations, f)
