@@ -3,6 +3,8 @@ name = "cointainer-scraper-ecb"
 version = "0.1.0"
 description = "Cointainer component for scraping coins from the ECB Website."
 authors = ["B4rtware <34386047+B4rtware@users.noreply.github.com>"]
+readme = "README.md"
+packages = [{ include = "cointainer_scraper_ecb" }]
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -24,5 +26,5 @@ reportImplicitStringConcatenation = "error"
 reportPropertyTypeMismatch = "error"
 
 [build-system]
-requires = ["poetry>=0.12"]
-build-backend = "poetry.masonry.api"
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
