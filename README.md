@@ -19,7 +19,7 @@ cointainer-scraper-ecb.svg?color=blue">
 
 Cointainer Scraper (ECB) is one of the components of the Cointainer. This component offers the functionality of scraping euro coin data from the ECB website.
 
-At the current time, these are the following dates:
+Currently supported coins:
 - €2 commemorative coins
   - Country
   - Feature
