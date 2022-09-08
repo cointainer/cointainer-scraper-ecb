@@ -9,6 +9,7 @@ license = "Apache-2.0"
 repository = "https://github.com/cointainer/scraper-ecb"
 homepage = "https://github.com/cointainer/scraper-ecb"
 keywords = ["scraper", "ecb", "coins", "collectables"]
+include = ["CHANGELOG.md"]
 classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Natural Language :: English",
