@@ -5,6 +5,18 @@ description = "Cointainer component for scraping coins from the ECB Website."
 authors = ["B4rtware <34386047+B4rtware@users.noreply.github.com>"]
 readme = "README.md"
 packages = [{ include = "cointainer_scraper_ecb" }]
+license = "Apache-2.0"
+repository = "https://github.com/cointainer/scraper-ecb"
+homepage = "https://github.com/cointainer/scraper-ecb"
+keywords = ["scraper", "ecb", "coins", "collectables"]
+classifiers = [
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Typing :: Typed",
+    "Programming Language :: Python",
+    "Topic :: Internet"
+]
 
 [tool.poetry.dependencies]
 python = "^3.10"

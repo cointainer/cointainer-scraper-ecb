@@ -43,8 +43,40 @@ get_two_euro_commemorative_coins(
     year=2004
 )
 ```
-
 > Tested with Python 3.10.4 and cointainer_scraper_ecb v0.1.0 ✔️
+
+Two data classes are relevant which are beeing returned by the function:
+```python
+def get_two_euro_commemorative_coins(
+    lang: str = "en",
+    year: int = START_YEAR
+) -> List[TwoEuro]: ...
+```
+
+```python
+@dataclass
+class Coinage:
+    """Represents a coin of a country to be collected."""
+
+    country: Optional[str]
+    image_default_url: Optional[str]
+    volume: Optional[int]
+    image_default_url_info: Optional[str] = None
+    country_info: Optional[str] = None
+    circulation_date: Optional[datetime.date] = None
+    image_attribution: Optional[str] = None
+    circulation_date_info: Optional[str] = None
+    volume_info: Optional[str] = None
+
+
+@dataclass
+class TwoEuro:
+    """A two euro coin to collect."""
+
+    feature: str = ""
+    description: str = ""
+    coinages: List[Coinage] = field(default_factory=list)
+```
 
 ## Development
 
