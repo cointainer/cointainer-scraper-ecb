@@ -88,12 +88,12 @@ class TwoEuro:
 ### Creating a new release
 
 1. Run the following command `poetry version <version>`
-<br>*Morpho* uses the following schema: `^\d+\.\d+\.\d+((b|a)\d+)?$`
+<br>*cointainer-scraper-ecb* uses the following schema: `^\d+\.\d+\.\d+((b|a)\d+)?$`
 
-2. Bump the version within the file: `morpho/__version__.py`
+2. Bump the version within the file: `cointainer_scraper_ecb/__version__.py`
 <br>Make sure it's the same version used when bumping with poetry
 
-3. Open `Changelog.md` and write the new changelog:
+3. Open `CHANGELOG.md` and write the new changelog:
     - Use the following `#` header: `v<version> - (dd.mm.yyyy)`
     <br>Used `##` headers:
     - 💌 Added
@@ -107,7 +107,7 @@ class TwoEuro:
 
 6. Create a new github release and:
     1. Copy and paste the changelog content **without** the `#` header into the *description of the release* textbox
-    2. Use the `#` header style to fill in the *Release title* (copy it from the `Changelog.md`)
+    2. Use the `#` header style to fill in the *Release title* (copy it from the `CHANGELOG.md`)
     3. Copy the version with the `v`-prefix into the *Tag version*
 
 7. Attach the produced tarball and wheel (`dist/`) to the release
