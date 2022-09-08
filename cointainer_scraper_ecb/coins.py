@@ -39,6 +39,9 @@ path = Path(__file__).parent / Path("./countries.json")
 with path.open() as f:
     country_translations = json.load(f)
 
+# Some countries cannot be found with a certain string with pycountry, therefore a map
+# with the respective countries and the corresponding pycountry objects is predefined
+# here.
 fuzzy_search_cache: Dict[str, Data] = {
     "Vatican City".capitalize(): pycountry.countries.get(alpha_2="VA"),
     "Vatican".capitalize(): pycountry.countries.get(alpha_2="VA"),
@@ -54,6 +57,8 @@ info_description_mapping = {
     3: "issuing date",
 }
 
+# The issuing volume is specified in different languages with different strings.
+# Therefore these are also predefined here.
 million_mapping = {
     "милиона монети",
     "milionů mincí",
@@ -83,6 +88,8 @@ million_mapping = {
 
 @dataclass
 class Coinage:
+    """Represents a coin of a country to be collected."""
+
     country: Optional[str]
     image_default_url: Optional[str]
     volume: Optional[int]
@@ -96,6 +103,8 @@ class Coinage:
 
 @dataclass
 class TwoEuro:
+    """A two euro coin to collect."""
+
     feature: str = ""
     description: str = ""
     coinages: List[Coinage] = field(default_factory=list)
@@ -108,9 +117,30 @@ class TwoEuro:
         )
 
 
+@dataclass
+class Content:
+    feature: str = ""
+    description: str = ""
+    raw_issuing_volume: str = ""
+    raw_issuing_date: str = ""
+
+
 def _get_alpha2_country_from_string(
     text: str, year: int, paragraph_index: int, language: str = "en"
 ) -> Union[str, None]:
+    """Tries to find the alpha_2 name from a given text.
+
+    Args:
+        text (str): Text to search for alpha_2.
+        year (int): The year of the coin to be parsed.
+        paragraph_index (int): The index of the coin_box from the HTML
+            website (ascending).
+        language (str, optional): Language of the website. Defaults to "en".
+
+    Returns:
+        Union[str, None]: Returns the alpha_2 for the country or None
+            if no country was found.
+    """
     if text.strip().lower() == "euro area countries":
         return None
 
@@ -141,29 +171,21 @@ def _get_alpha2_country_from_string(
     return found_country.alpha_2
 
 
-def get_two_euro_commemorative_coins(
-    lang: str = "en", year: int = START_YEAR
-) -> List[TwoEuro]:
-    url = ECB_TWO_EURO_URL.format(year=year, lang=lang)
-    response = requests.get(url)
-    if not response.status_code == 200:
-        LOG.warning(
-            f"The request to: '{url}' returned with an incorrect status code "
-            + f"'{response.status_code}'. Expected status code '200'."
-        )
-        return []
-    return _get_two_euro_commemorative_coins(response.content, lang, year)
-
-
-@dataclass
-class Content:
-    feature: str = ""
-    description: str = ""
-    raw_issuing_volume: str = ""
-    raw_issuing_date: str = ""
-
-
 def _parse_content_fields(coin_box: Any, year: int, paragraph_index: int):
+    """Parses the respective content fields: Feature, Description, Issuing Volume and
+    Issuing date. Issuing volume and issuing are returned as raw string and must be
+    parsed further.
+
+    Args:
+        coin_box (Any): Html container.
+        year (int): The year of the coin to be parsed.
+        paragraph_index (int): The index of the coin_box from the HTML
+            website (ascending).
+
+    Returns:
+        Content: Content instance which parsed content fields.
+    """
+
     # Get all descriptions fields assumed to be in order:
     #     'Feature:', 'Description:', 'Issuing volume:', 'Issuing date:'
     infos: List[str] = []
@@ -218,6 +240,17 @@ def _parse_content_fields(coin_box: Any, year: int, paragraph_index: int):
 
 
 def _parse_volume(box_content: Content) -> Tuple[Optional[int], Optional[str]]:
+    """Parses the issuing volume from a given box content.
+
+    Args:
+        box_content (Content): Content instance.
+
+    Returns:
+        Tuple[Optional[int], Optional[str]]: Tuple of
+            (<parsed volume>, <raw volume string>). On success it returns
+            (<volume>, None) otherwise (None, <raw volume string>).
+    """
+
     volume_str = "".join([c for c in box_content.raw_issuing_volume if c.isdigit()])
     if len(volume_str) != 0:
         volume = int(volume_str)
@@ -237,6 +270,14 @@ def _parse_volume(box_content: Content) -> Tuple[Optional[int], Optional[str]]:
 
 
 def _parse_image_urls(coin_box: Any) -> List[str]:
+    """Parses image urls from a given box content.
+
+    Args:
+        coin_box (Any): Html container.
+
+    Returns:
+        List[str]: Parsed image urls.
+    """
     image_container = coin_box.find("div", {"class": "coins"})
     images = image_container.find_all("img")
 
@@ -250,6 +291,20 @@ def _parse_image_urls(coin_box: Any) -> List[str]:
 def _parse_circulation_date(
     box_content: Content, language: str, year: int, paragraph_index: int
 ) -> Tuple[Optional[datetime.date], Optional[str]]:
+    """Parses the circulation date from a given box content.
+
+    Args:
+        box_content (Content): Content instance.
+        language (str): Language of the website.
+        year (int): The year of the coin to be parsed.
+        paragraph_index (int): The index of the coin_box from the HTML
+            website (ascending).
+
+    Returns:
+        Tuple[Optional[datetime.date], Optional[str]]: Tuple of
+            (<circulation date>, <raw circulation date>). On success it returns
+            (<circulation date>, None) otherwise (None, <raw circulation date>).
+    """
     parsed_datetime = dateparser.parse(
         box_content.raw_issuing_date, languages=[language]
     )
@@ -422,3 +477,17 @@ def _get_two_euro_commemorative_coins(
             )
         )
     return coins
+
+
+def get_two_euro_commemorative_coins(
+    lang: str = "en", year: int = START_YEAR
+) -> List[TwoEuro]:
+    url = ECB_TWO_EURO_URL.format(year=year, lang=lang)
+    response = requests.get(url)
+    if not response.status_code == 200:
+        LOG.warning(
+            f"The request to: '{url}' returned with an incorrect status code "
+            + f"'{response.status_code}'. Expected status code '200'."
+        )
+        return []
+    return _get_two_euro_commemorative_coins(response.content, lang, year)
