@@ -9,7 +9,7 @@
     <img alt="License" src="https://img.shields.io/github/license/b4rtware/
 cointainer-scraper-ecb.svg?color=blue">
 </a>
-<a href="https://github.com/B4rtware/cointainer-scraper-ecb"><img src="https://img.shields.io/pypi/pyversions/cointainer-scraper-ecb.svg"></a><br>
+<a href="https://github.com/cointainer/scraper-ecb"><img src="https://img.shields.io/pypi/pyversions/cointainer-scraper-ecb.svg"></a><br>
 <a href="">
   <img src="https://img.shields.io/pypi/v/cointainer-scraper-ecb?color=dar-green" />
 </a>
