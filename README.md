@@ -78,6 +78,11 @@ class TwoEuro:
     coinages: List[Coinage] = field(default_factory=list)
 ```
 
+## Roadmap
+
+- [ ] Implement national side scraping (2€, 1€, 50 cent, 20 cent, 10 cent, 5 cent, 2 cent and 1 cent)
+- [ ] CLI implementation with click
+
 ## Development
 
 ### Creating a new release
