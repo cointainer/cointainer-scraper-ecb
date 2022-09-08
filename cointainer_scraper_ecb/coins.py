@@ -482,6 +482,15 @@ def _get_two_euro_commemorative_coins(
 def get_two_euro_commemorative_coins(
     lang: str = "en", year: int = START_YEAR
 ) -> List[TwoEuro]:
+    """Scrapes two euro commemorative coins from ecb.
+
+    Args:
+        lang (str, optional): Language of the website. Defaults to "en".
+        year (int, optional): The year of the coin to be parsed. Defaults to START_YEAR.
+
+    Returns:
+        List[TwoEuro]: Scraped two euro commemorative coins.
+    """
     url = ECB_TWO_EURO_URL.format(year=year, lang=lang)
     response = requests.get(url)
     if not response.status_code == 200:
