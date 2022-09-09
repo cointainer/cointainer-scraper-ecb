@@ -4,9 +4,8 @@ import logging
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union, cast
+from typing import Any, Optional, Union, cast
 
-# TODO: try to remove this dependeny by just declaring a long list with the mappings?
 import dateparser
 import pycountry
 import requests
