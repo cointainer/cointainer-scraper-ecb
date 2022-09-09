@@ -1,6 +1,7 @@
 # uses countries from https://github.com/mledoze/countries/blob/master/dist/countries.json
 
 import json
+
 import requests
 
 response = requests.get("https://raw.githubusercontent.com/mledoze/countries/master/dist/countries.json")
