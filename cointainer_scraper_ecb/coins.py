@@ -42,7 +42,7 @@ with path.open() as f:
 # Some countries cannot be found with a certain string with pycountry, therefore a map
 # with the respective countries and the corresponding pycountry objects is predefined
 # here.
-fuzzy_search_cache: Dict[str, Data] = {
+fuzzy_search_cache: dict[str, Data] = {
     "Vatican City".capitalize(): pycountry.countries.get(alpha_2="VA"),
     "Vatican".capitalize(): pycountry.countries.get(alpha_2="VA"),
     "Italia".capitalize(): pycountry.countries.get(alpha_2="IT"),
@@ -107,7 +107,7 @@ class TwoEuro:
 
     feature: str = ""
     description: str = ""
-    coinages: List[Coinage] = field(default_factory=list)
+    coinages: list[Coinage] = field(default_factory=list)
 
     def __str__(self) -> str:
         return (
@@ -188,7 +188,7 @@ def _parse_content_fields(coin_box: Any, year: int, paragraph_index: int):
 
     # Get all descriptions fields assumed to be in order:
     #     'Feature:', 'Description:', 'Issuing volume:', 'Issuing date:'
-    infos: List[str] = []
+    infos: list[str] = []
     paragraphs = coin_box.find_all("p")
 
     # Description (can be composed of multiple paragraphs)
@@ -239,7 +239,7 @@ def _parse_content_fields(coin_box: Any, year: int, paragraph_index: int):
     )
 
 
-def _parse_volume(box_content: Content) -> Tuple[Optional[int], Optional[str]]:
+def _parse_volume(box_content: Content) -> tuple[Optional[int], Optional[str]]:
     """Parses the issuing volume from a given box content.
 
     Args:
@@ -254,7 +254,7 @@ def _parse_volume(box_content: Content) -> Tuple[Optional[int], Optional[str]]:
     volume_str = "".join([c for c in box_content.raw_issuing_volume if c.isdigit()])
     if len(volume_str) != 0:
         volume = int(volume_str)
-        volume_word_suffix: List[str] = []
+        volume_word_suffix: list[str] = []
         for word in reversed(
             box_content.raw_issuing_volume.replace("\xa0", " ").split(" ")
         ):
@@ -269,7 +269,7 @@ def _parse_volume(box_content: Content) -> Tuple[Optional[int], Optional[str]]:
         return (None, box_content.raw_issuing_volume)
 
 
-def _parse_image_urls(coin_box: Any) -> List[str]:
+def _parse_image_urls(coin_box: Any) -> list[str]:
     """Parses image urls from a given box content.
 
     Args:
@@ -290,7 +290,7 @@ def _parse_image_urls(coin_box: Any) -> List[str]:
 
 def _parse_circulation_date(
     box_content: Content, language: str, year: int, paragraph_index: int
-) -> Tuple[Optional[datetime.date], Optional[str]]:
+) -> tuple[Optional[datetime.date], Optional[str]]:
     """Parses the circulation date from a given box content.
 
     Args:
@@ -321,7 +321,7 @@ def _parse_circulation_date(
 
 def _get_two_euro_commemorative_coins(
     content: bytes, lang: str = "", year: int = START_YEAR
-) -> List[TwoEuro]:
+) -> list[TwoEuro]:
     soup = BeautifulSoup(content, "html.parser")
     coin_boxes_div = soup.find("div", {"class": "boxes"})
 
@@ -339,7 +339,7 @@ def _get_two_euro_commemorative_coins(
 
     coin_boxes = cast(Tag, coin_boxes_div).find_all("div", {"class": "box"})
 
-    coins: List[TwoEuro] = []
+    coins: list[TwoEuro] = []
     for paragraph_index, coin_box in enumerate(coin_boxes):
         box_content = _parse_content_fields(coin_box, year, paragraph_index)
 
@@ -406,7 +406,7 @@ def _get_two_euro_commemorative_coins(
                     )
                 ]
 
-        coinages: List[Coinage] = []
+        coinages: list[Coinage] = []
         for image_url in image_urls:
             # Since 2022 the ecb don't  provide a name inside the the image link
             # /euro/coins/comm/shared/img/comm_2022_Joze_Plecnik.jpg
@@ -428,7 +428,7 @@ def _get_two_euro_commemorative_coins(
                 continue
             # /euro/coins/comm/shared/img/joint_comm_2009_Luxembourg_Face.jpg
             # try to extract the country out of the image file name
-            searched_words: List[str] = []
+            searched_words: list[str] = []
             for word in reversed(
                 image_url.rsplit(".", maxsplit=1)[0]
                 .rsplit("/", maxsplit=1)[1]
@@ -481,7 +481,7 @@ def _get_two_euro_commemorative_coins(
 
 def get_two_euro_commemorative_coins(
     lang: str = "en", year: int = START_YEAR
-) -> List[TwoEuro]:
+) -> list[TwoEuro]:
     """Scrapes two euro commemorative coins from ecb.
 
     Args:
