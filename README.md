@@ -43,7 +43,7 @@ get_two_euro_commemorative_coins(
     year=2004
 )
 ```
-> Tested with Python 3.10.4 and cointainer_scraper_ecb v0.1.0 ✔️
+> Tested with Python 3.9.13 and cointainer_scraper_ecb v0.1.0 ✔️
 
 Two data classes are relevant which are beeing returned by the function:
 ```python
