@@ -6,8 +6,8 @@ authors = ["B4rtware <34386047+B4rtware@users.noreply.github.com>"]
 readme = "README.md"
 packages = [{ include = "cointainer_scraper_ecb" }]
 license = "Apache-2.0"
-repository = "https://github.com/cointainer/scraper-ecb"
-homepage = "https://github.com/cointainer/scraper-ecb"
+repository = "https://github.com/cointainer/cointainer-scraper-ecb"
+homepage = "https://github.com/cointainer/cointainer-scraper-ecb"
 keywords = ["scraper", "ecb", "coins", "collectables"]
 include = ["CHANGELOG.md"]
 classifiers = [
