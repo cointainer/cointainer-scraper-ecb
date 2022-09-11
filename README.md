@@ -5,7 +5,7 @@
 <div align="center">
 <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg">
 </a>
-<a href="https://github.com/cointainer/scraper-ecb/blob/main/LICENSE">
+<a href="https://github.com/cointainer/cointainer-scraper-ecb/blob/main/LICENSE">
     <img alt="License" src="https://img.shields.io/github/license/b4rtware/
 cointainer-scraper-ecb.svg?color=blue">
 </a>
