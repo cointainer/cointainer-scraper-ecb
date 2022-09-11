@@ -34,7 +34,7 @@ ECB_TWO_EURO_URL = (
 START_YEAR = 2004
 CURRENT_YEAR = datetime.datetime.now().year
 
-path = Path(__file__).parent / Path("./countries.json")
+path = Path(__file__).parent / Path("./data/countries.json")
 with path.open() as f:
     country_translations = json.load(f)
 

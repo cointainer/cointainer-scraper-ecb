@@ -1,10 +1,13 @@
 # uses countries from https://github.com/mledoze/countries/blob/master/dist/countries.json
 
 import json
+from pathlib import Path
 
 import requests
 
-response = requests.get("https://raw.githubusercontent.com/mledoze/countries/master/dist/countries.json")
+response = requests.get(
+    "https://raw.githubusercontent.com/mledoze/countries/master/dist/countries.json"
+)
 
 countries = json.loads(response.text)
 
@@ -18,5 +21,8 @@ for country in countries:
 
         translations[translated_country] = country["name"]["common"]
 
-with open("cointainer_scraper_ecb/countries.json", "w", encoding="utf-8") as f:
+file_path = Path(__file__).parent.parent / Path(
+    "cointainer_scraper_ecb/data/countries.json"
+)
+with file_path.open("w", encoding="utf-8") as f:
     json.dump(translations, f)
