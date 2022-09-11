@@ -87,10 +87,23 @@ class TwoEuro:
 
 ### Creating a new release
 
+#### A. Create annotated release tag
+
+1. New tag
+```
+git tag -a v<major>.<minor>.<patch>(a|b) -m release v<major>.<minor>.<patch>(a|b)
+```
+2. Push created tag
+
+```
+git push --tags
+```
+#### B. Create GitHub release
+
 1. Run the following command `poetry version <version>`
 <br>*cointainer-scraper-ecb* uses the following schema: `^\d+\.\d+\.\d+((b|a)\d+)?$`
 
-2. Bump the version within the file: `cointainer_scraper_ecb/__version__.py`
+2. Bump the version within the file: `cointainer_scraper_ecb/__init__.py`
 <br>Make sure it's the same version used when bumping with poetry
 
 3. Open `CHANGELOG.md` and write the new changelog:
