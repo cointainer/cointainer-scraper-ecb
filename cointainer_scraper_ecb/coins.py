@@ -492,6 +492,13 @@ def get_two_euro_commemorative_coins(
     """
     url = ECB_TWO_EURO_URL.format(year=year, lang=lang)
     response = requests.get(url)
+    if response.status_code == 404:
+        LOG.info(
+            f"It looks like there are no coins for year: '{year}' and "
+            + f"language: '{lang}' yet."
+        )
+        return []
+
     if not response.status_code == 200:
         LOG.warning(
             f"The request to: '{url}' returned with an incorrect status code "
