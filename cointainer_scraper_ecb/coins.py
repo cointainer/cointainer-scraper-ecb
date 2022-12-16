@@ -28,9 +28,8 @@ stream.setFormatter(formatter)
 LOG.addHandler(stream)
 
 ECB_BASE_URL = "https://www.ecb.europa.eu"
-ECB_TWO_EURO_URL = (
-    "https://www.ecb.europa.eu/euro/coins/comm/html/comm_{year}.{lang}.html"
-)
+ECB_TWO_EURO_URL = "https://www.ecb.europa.eu/euro/coins/comm/html"
+ECB_TWO_EURO_HTML_URL = ECB_TWO_EURO_URL + "/comm_{year}.{lang}.html"
 START_YEAR = 2004
 CURRENT_YEAR = datetime.datetime.now().year
 
@@ -281,10 +280,17 @@ def _parse_image_urls(coin_box: Any) -> list[str]:
     images = image_container.find_all("img")
 
     return [
-        ECB_BASE_URL + image["src"].removeprefix(".")
+        _create_image_absolute_url(image["src"].removeprefix("."))
         for image in images
         if not image["src"].endswith(".html") and image["src"]
     ]
+
+
+def _create_image_absolute_url(url: str) -> str:
+    if url.startswith("/"):
+        return ECB_BASE_URL + url
+
+    return f"{ECB_TWO_EURO_URL}/{url}"
 
 
 def _parse_circulation_date(
