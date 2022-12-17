@@ -43,7 +43,7 @@ get_two_euro_commemorative_coins(
     year=2004
 )
 ```
-> Tested with Python 3.9.13 and cointainer_scraper_ecb v0.1.0 ✔️
+> Tested with Python 3.9.13 and cointainer_scraper_ecb v0.1.2 ✔️
 
 Two data classes are relevant which are beeing returned by the function:
 ```python
@@ -87,24 +87,15 @@ class TwoEuro:
 
 ### Creating a new release
 
-#### A. Create annotated release tag
-
-1. New tag
-```
-git tag -a v<major>.<minor>.<patch>(a|b) -m release v<major>.<minor>.<patch>(a|b)
-```
-2. Push created tag
-
-```
-git push --tags
-```
-#### B. Create GitHub release
-
 1. Run the following command `poetry version <version>`
 <br>*cointainer-scraper-ecb* uses the following schema: `^\d+\.\d+\.\d+((b|a)\d+)?$`
 
-2. Bump the version within the file: `cointainer_scraper_ecb/__init__.py`
-<br>Make sure it's the same version used when bumping with poetry
+2. Bump the version within the files: 
+   - [`cointainer_scraper_ecb/__init__.py`](cointainer_scraper_ecb/__init__.py)
+   - [`tests/test_cointainer_scraper_ecb.py`](tests/test_cointainer_scraper_ecb.py)
+   - [`pyproject.toml`](pyproject.toml)
+
+    *Make sure it's the same version used when bumping with poetry*
 
 3. Open `CHANGELOG.md` and write the new changelog:
     - Use the following `#` header: `v<version> - (yyyy-mm-dd)`
@@ -114,9 +105,9 @@ git push --tags
     - ♻️ Changed
 
 4. Stage the modified files and push them with the following commit message:
-> chore: bump to version `v<version>`
+    > chore: bump to version `v<version>`
 
-1. Create annotated release tag
+5. Create annotated release tag
    1.  New tag
     ```
     git tag -s -m "release v<version>" v<version>
@@ -127,9 +118,9 @@ git push --tags
     git push --tags
     ```
 
-2. Run the following command `poetry build` to create a tarball and a wheel based on the new version
+6. Run the following command `poetry build` to create a tarball and a wheel based on the new version
 
-3. Create a new github release and:
+7. Create a new github release and:
     1. Copy and paste the changelog content **without** the `#` header into the *description of the release* textbox
     2. Use the `#` header style to fill in the *Release title* (copy it from the `CHANGELOG.md`)
     3. Copy the version with the `v`-prefix into the *Tag version*
