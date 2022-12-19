@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.1.3] - (2022-12-19)
+
+### Changed
+- Changed the location of the logging setup (a26a96e427aa970e358c268e4d39309e2eb29323)
+
+### Fixed
+- Fixed dataparser displays a warning while using not the latest version (63c7e625c71693283b981f81af1168ad6248af03)
+
+### Security
+- Security: bump pytest from 7.1.3 to 7.2.0 (9abbf82c25d6bdac4ea2d9b447dad0c736188cbe)
+
 ## [v0.1.2] - (2022-12-17)
 
 ### Security

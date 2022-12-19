@@ -3,7 +3,7 @@ import sys
 
 from .coins import get_two_euro_commemorative_coins as get_two_euro_commemorative_coins
 
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 
 # setup logging
 
