@@ -14,18 +14,6 @@ from bs4.element import NavigableString, Tag
 from pycountry.db import Data
 
 LOG = logging.getLogger("cointainer_scraper_ecb")
-LOG.setLevel(logging.INFO)
-
-formatter = logging.Formatter(
-    "[{asctime}] [{levelname:<7}] [{name}] {message}",
-    datefmt="%d.%m.%Y %H:%M:%S",
-    style="{",
-)
-
-
-stream = logging.StreamHandler(sys.stdout)
-stream.setFormatter(formatter)
-LOG.addHandler(stream)
 
 ECB_BASE_URL = "https://www.ecb.europa.eu"
 ECB_TWO_EURO_URL = "https://www.ecb.europa.eu/euro/coins/comm/html"
@@ -496,7 +484,7 @@ def get_two_euro_commemorative_coins(
     Returns:
         List[TwoEuro]: Scraped two euro commemorative coins.
     """
-    url = ECB_TWO_EURO_URL.format(year=year, lang=lang)
+    url = ECB_TWO_EURO_HTML_URL.format(year=year, lang=lang)
     response = requests.get(url)
     if response.status_code == 404:
         LOG.info(
