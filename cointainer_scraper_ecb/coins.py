@@ -13,7 +13,7 @@ from bs4 import BeautifulSoup
 from bs4.element import NavigableString, Tag
 from pycountry.db import Data
 
-LOG = logging.getLogger("cointainer_scraper_ecb")
+LOG = logging.getLogger(__name__)
 
 ECB_BASE_URL = "https://www.ecb.europa.eu"
 ECB_TWO_EURO_URL = "https://www.ecb.europa.eu/euro/coins/comm/html"
